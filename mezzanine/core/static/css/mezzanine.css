@@ -81,6 +81,19 @@ footer .separator {
   opacity: 0.3;
   margin: 0 10px;
 }
+blockquote footer, blockquote small, blockquote .small {
+  display: block;
+  font-size: 80%;
+  line-height: 1.428571429;
+  color: #999;
+  background-color: white;
+  border-top: none;
+  margin-top: 0;
+  padding: 0;
+}
+blockquote footer:before, blockquote small:before, blockquote .small:before {
+  content: '\2014 \00A0';
+}
 .site-info {
   font-size: 90%;
   margin-top: 15px;
