@@ -59,6 +59,28 @@ class MenusField(MultiChoiceField):
             menus = getattr(settings, "PAGE_MENU_TEMPLATES", [])
             return (m[:2] for m in menus)
 
+    def deconstruct(self):
+        """
+        Materialise ``choices`` for deconstruction.
+
+        ``MenusField.choices`` is a property returning a generator. Django
+        <=4.2 unrolled an iterable ``choices`` value into a concrete list in
+        ``Field.deconstruct()``; Django 5.0 removed that unrolling, so the
+        generator is returned verbatim. The migration autodetector then sees a
+        generator where the recorded migration state holds a tuple and emits
+        the same ``AlterField`` on every run (0007, 0008, ... forever).
+
+        Restoring the <=4.2 materialisation keeps the deconstructed field
+        state stable and byte-identical to the recorded history, so no new
+        migration identity is needed for the Django 5.2 endpoint. Behaviour is
+        otherwise unchanged: the field still reads ``PAGE_MENU_TEMPLATES``
+        lazily through ``choices``/``get_default``.
+        """
+        name, path, args, kwargs = super().deconstruct()
+        if "choices" in kwargs:
+            kwargs["choices"] = list(kwargs["choices"])
+        return name, path, args, kwargs
+
     def _set_choices(self, choices):
         self._choices = choices
 
