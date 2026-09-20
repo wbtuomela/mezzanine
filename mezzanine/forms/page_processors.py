@@ -20,7 +20,10 @@ def format_value(value):
     return value
 
 
-@processor_for(Form)
+# The site registers its own @processor_for(Form) in jaanj/page_processors.py.
+# Registration prepends and PageMiddleware stops at the first HttpResponse, so
+# keeping both registrations would make form handling order-dependent.
+#@processor_for(Form)
 def form_processor(request, page):
     """
     Display a built form and handle submission.
